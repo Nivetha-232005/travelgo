@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <section class="bc-header">
+            <div class="bc-header-icon">✅</div>
+            <h1 class="bc-header-title">Booking Confirmed!</h1>
+            <p class="bc-header-subtitle">Your adventure awaits. Here are your booking details.</p>
+        </section>
+
+        <section class="bc-wrapper">
+            <div class="form-container bc-form-container">
+                <h2 class="bc-section-heading">Booking Details</h2>
+
+                <div class="bc-grid">
+                    <div class="bc-booking-id-card">
+                        <div class="bc-muted-label">Booking ID</div>
+                        <div class="bc-booking-id">{{ booking._id }}</div>
+                    </div>
+
+                    <div class="bc-info-card">
+                        <h3 class="bc-info-title">Trip Information</h3>
+
+                        <div class="bc-info-list">
+                            <div class="bc-row bc-row-divider">
+                                <span class="bc-row-label">Type:</span>
+                                <span class="bc-row-value">
+                                    {% if booking.type == 'hotel' %}
+                                        🏨 Hotel Booking
+                                    {% elif booking.type == 'plan' %}
+                                        🗺️ Travel Plan
+                                    {% elif booking.type == 'vehicle' %}
+                                        🚗 Vehicle Rental
+                                    {% elif booking.type == 'flight' %}
+                                        ✈️ Flight Booking
+                                    {% else %}
+                                        🎯 {{ booking.type.title() }}
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            {% if booking.type == 'plan' %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Plan:</span><span class="bc-row-value">{{ booking.plan_name }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Destination:</span><span class="bc-row-value">{{ booking.destination }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Duration:</span><span class="bc-row-value">{{ booking.duration }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Travel Date:</span><span class="bc-row-value">{{ booking.travel_date }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Travelers:</span><span class="bc-row-value">{{ booking.travelers }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Price per Person:</span><span class="bc-row-value">{{ booking.price_per_person|inr }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Total Price:</span><span class="bc-row-value bc-price-highlight">{{ booking.total_price|inr }}</span></div>
+                            {% if booking.includes %}
+                            <div class="bc-includes-wrap">
+                                <span class="bc-row-label bc-block-label">Includes:</span>
+                                <div>
+                                    {% for item in booking.includes %}
+                                    <span class="bc-include-pill">✓ {{ item }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% elif booking.type == 'hotel' %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Hotel:</span><span class="bc-row-value">{{ booking.name }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Check-in:</span><span class="bc-row-value">{{ booking.check_in }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Check-out:</span><span class="bc-row-value">{{ booking.check_out }}</span></div>
+                            <div class="bc-row"><span class="bc-row-label">Rooms:</span><span class="bc-row-value">{{ booking.rooms }}</span></div>
+
+                            {% elif booking.type == 'vehicle' %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Vehicle:</span><span class="bc-row-value">{{ booking.vehicle_name }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Pickup:</span><span class="bc-row-value">{{ booking.pickup_date }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Return:</span><span class="bc-row-value">{{ booking.return_date }}</span></div>
+                            <div class="bc-row"><span class="bc-row-label">Location:</span><span class="bc-row-value">{{ booking.location }}</span></div>
+
+                            {% elif booking.type == 'flight' %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Airline:</span><span class="bc-row-value">{{ booking.airline }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Route:</span><span class="bc-row-value">{{ booking.from_city }} → {{ booking.to_city }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Departure:</span><span class="bc-row-value">{{ booking.departure }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Arrival:</span><span class="bc-row-value">{{ booking.arrival }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Duration:</span><span class="bc-row-value">{{ booking.duration }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Passengers:</span><span class="bc-row-value">{{ booking.passengers }}</span></div>
+                            <div class="bc-row"><span class="bc-row-label">Price:</span><span class="bc-row-value bc-price-highlight">{{ booking.price }}</span></div>
+
+                            {% else %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Destination:</span><span class="bc-row-value">{{ booking.destination }}</span></div>
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Travel Date:</span><span class="bc-row-value">{{ booking.date }}</span></div>
+                            <div class="bc-row"><span class="bc-row-label">Travelers:</span><span class="bc-row-value">{{ booking.travelers }}</span></div>
+                            {% endif %}
+
+                            {% if booking.payment_method %}
+                            <div class="bc-row bc-row-divider">
+                                <span class="bc-row-label">Payment:</span>
+                                <span class="bc-row-value">
+                                    {% if booking.payment_method == 'credit_card' %}💳 Credit Card
+                                    {% elif booking.payment_method == 'debit_card' %}💳 Debit Card
+                                    {% elif booking.payment_method == 'paypal' %}🅿️ PayPal
+                                    {% elif booking.payment_method == 'upi' %}📱 UPI
+                                    {% elif booking.payment_method == 'net_banking' %}🏦 Net Banking
+                                    {% elif booking.payment_method == 'wallet' %}👝 Wallet
+                                    {% else %}{{ booking.payment_method }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            {% endif %}
+
+                            {% if booking.transaction_id %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Transaction ID:</span><span class="bc-row-value bc-id-highlight">{{ booking.transaction_id }}</span></div>
+                            {% endif %}
+
+                            {% if booking.payment_details and booking.payment_details.upi_id %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">UPI ID:</span><span class="bc-row-value">{{ booking.payment_details.upi_id }}</span></div>
+                            {% endif %}
+
+                            {% if booking.payment_details and booking.payment_details.bank %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Bank:</span><span class="bc-row-value bc-uppercase">{{ booking.payment_details.bank }}</span></div>
+                            {% endif %}
+
+                            {% if booking.payment_details and booking.payment_details.wallet %}
+                            <div class="bc-row bc-row-divider"><span class="bc-row-label">Wallet:</span><span class="bc-row-value bc-capitalize">{{ booking.payment_details.wallet }}</span></div>
+                            {% endif %}
+
+                            <div class="bc-row bc-status-row">
+                                <span class="bc-row-label">Status:</span>
+                                <span class="badge badge-success">✓ {{ booking.status.upper() }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bc-booked-on-card">
+                        <span class="bc-row-label">Booked On:</span>
+                        <span class="bc-row-value">{{ booking.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="bc-next-card">
+                    <h3 class="bc-next-title">What's Next?</h3>
+                    <ul class="bc-next-list">
+                        <li>📧 Check your email for confirmation details</li>
+                        <li>📱 Download our mobile app for easy access</li>
+                        <li>💬 Need help? Contact our support team</li>
+                        <li>📍 Share your trip with friends and family!</li>
+                    </ul>
+                </div>
+
+                <div class="bc-actions">
+                    <a href="/bookings" class="btn btn-primary bc-action-btn">View All Bookings</a>
+                    <a href="/dashboard" class="btn btn-secondary bc-action-btn">Back to Dashboard</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="bc-help-section">
+            <h2 class="bc-help-title">Need Help?</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>24/7 Support</h3>
+                    <p>Our customer support team is always ready to help</p>
+                    <a href="#" class="bc-help-link">Contact Us →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile App</h3>
+                    <p>Manage your bookings on the go with our app</p>
+                    <a href="#" class="bc-help-link">Download →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Travel Tips</h3>
+                    <p>Get valuable advice for your next adventure</p>
+                    <a href="/tips" class="bc-help-link">Learn More →</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

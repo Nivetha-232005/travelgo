@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGo - Search Destinations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Find Your Perfect Trip</h1>
+            <p>Browse travel plans or search by destination, budget, and category</p>
+        </div>
+
+        <div class="search-card">
+            <h2 class="plan-search-title">Search Travel Plans</h2>
+            <form method="POST">
+                <div class="location-tools">
+                    <button type="button" class="btn btn-secondary location-track-btn" data-location-targets="destination" onclick="handleLocationTracking(this)">📍 Use Current Location</button>
+                    <span class="location-track-status" aria-live="polite"></span>
+                </div>
+                <input type="hidden" name="user_lat" value="">
+                <input type="hidden" name="user_lng" value="">
+
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="destination">Destination</label>
+                        <input type="text" id="destination" name="destination" placeholder="e.g. Paris, Tokyo, Bali">
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Budget Range</label>
+                        <select name="budget" id="budget">
+                            <option value="">All Budgets</option>
+                            <option value="budget">Budget (Under ₹41,500)</option>
+                            <option value="moderate">Moderate (₹41,500-₹1,24,500)</option>
+                            <option value="premium">Premium (₹1,24,500-₹2,49,000)</option>
+                            <option value="luxury">Luxury (₹2,49,000+)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="category">Travel Category</label>
+                        <select name="category" id="category">
+                            <option value="">All Categories</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="beach">Beach</option>
+                            <option value="culture">Culture & History</option>
+                            <option value="food">Food & Wine</option>
+                            <option value="mountains">Mountains & Hiking</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="travelers">Number of Travelers</label>
+                        <input type="number" id="travelers" name="travelers" min="1" value="1">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary plan-search-btn">Search Plans</button>
+            </form>
+        </div>
+
+        {% if plans is not none %}
+            {% if plans %}
+            <h2 class="plan-result-title">
+                {% if show_all %}All Travel Plans{% else %}Matching Travel Plans ({{ plans|length }}){% endif %}
+            </h2>
+            <div class="product-grid">
+                {% for plan in plans %}
+                <div class="product-card">
+                    <div class="product-image plan-card-image-wrap">
+                        {% if plan.image_url %}
+                        <img src="{{ plan.image_url }}" alt="{{ plan.name }}" class="plan-card-image">
+                        {% else %}
+                        {{ plan.icon }}
+                        {% endif %}
+                    </div>
+                    <div class="product-content">
+                        <div class="product-title">{{ plan.name }}</div>
+                        <div class="product-description">{{ plan.destination }} &bull; {{ plan.duration }}</div>
+                        <div class="product-rating">⭐ {{ plan.rating }}/5 &bull; {{ plan.category | title }}</div>
+                        <div class="plan-include-wrap">
+                            {% for item in plan.includes %}
+                            <span class="plan-include-pill">{{ item }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="product-price">{{ plan.price|inr }}<span class="plan-per-person">/person</span></div>
+                        <form method="POST" action="/book-plan" class="plan-book-form">
+                            <input type="hidden" name="plan_id" value="{{ plan.plan_id }}">
+                            <div class="plan-book-row">
+                                <input type="number" name="travelers" min="1" max="{{ plan.max_travelers }}" value="{{ travelers|default(1) }}" class="plan-book-input" placeholder="Travelers">
+                                <input type="date" name="travel_date" title="Travel date" required class="plan-book-input">
+                            </div>
+                            <button type="submit" class="btn btn-primary plan-pay-btn">Continue to Payment</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="plan-empty-card">
+                <h2 class="plan-empty-title">No Plans Found</h2>
+                <p class="plan-empty-text">Try a different destination or broader filters.</p>
+                <a href="/plans" class="btn btn-primary">Browse All Plans</a>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="plan-browse-wrap">
+            <a href="/plans" class="btn btn-secondary plan-browse-btn">Browse All Available Plans</a>
+        </div>
+        {% endif %}
+
+        <div class="features plan-features">
+            <div class="feature-card">
+                <div class="feature-icon">🔥</div>
+                <h3>Trending Now</h3>
+                <p>Tokyo, Paris, New York, Bali</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Best Deals</h3>
+                <p>Save up to 40% on bookings</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h3>Top Rated</h3>
+                <p>Highly recommended destinations</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

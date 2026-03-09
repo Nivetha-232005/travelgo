@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGo - Notifications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Your Notifications</h1>
+            <p>Stay updated with your bookings and special offers</p>
+        </div>
+
+        <div style="max-width: 600px; margin: 0 auto;">
+            {% for notif in notifications %}
+            <div class="notification-item" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease; cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">
+                            {% if notif.type == 'booking' %}
+                                🎫 {{ notif.message }}
+                            {% elif notif.type == 'offer' %}
+                                💰 {{ notif.message }}
+                            {% else %}
+                                ⭐ {{ notif.message }}
+                            {% endif %}
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">{{ notif.date }}</p>
+                    </div>
+                    <button onclick="dismissNotification(this)" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Dismiss</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if not notifications %}
+            <div style="text-align: center; padding: 3rem; background: rgba(255, 255, 255, 0.05); border-radius: 15px;">
+                <p style="font-size: 2rem; margin-bottom: 1rem;">🔔</p>
+                <h2 style="margin-bottom: 0.5rem;">No Notifications</h2>
+                <p style="color: rgba(255, 255, 255, 0.7);">You're all caught up!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Notification Preferences -->
+        <div style="max-width: 600px; margin: 3rem auto;">
+            <div class="form-container">
+                <h3 style="margin-bottom: 1.5rem;">Notification Preferences</h3>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" checked style="margin-right: 0.5rem; width: auto;">
+                        <span>Booking Confirmations</span>
+                    </label>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" checked style="margin-right: 0.5rem; width: auto;">
+                        <span>Special Offers & Deals</span>
+                    </label>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" checked style="margin-right: 0.5rem; width: auto;">
+                        <span>Travel Tips & Recommendations</span>
+                    </label>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" style="margin-right: 0.5rem; width: auto;">
+                        <span>Weekly Newsletter</span>
+                    </label>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%;">Save Preferences</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script>
+        function dismissNotification(button) {
+            const item = button.closest('.notification-item');
+            item.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => item.remove(), 300);
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vehicle.name }} - Seat Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .seat-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .seat-title {
+            font-size: 2rem;
+            margin-bottom: 0.45rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .seat-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.3rem;
+        }
+
+        .seat-layout-wrap {
+            display: grid;
+            grid-template-columns: minmax(260px, 340px) 1fr;
+            gap: 1.2rem;
+            align-items: start;
+            margin-bottom: 2rem;
+        }
+
+        .seat-summary,
+        .seat-layout-card {
+            background: rgba(255, 255, 255, 0.07);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            border: 1.5px solid rgba(0, 212, 255, 0.25);
+            border-radius: 20px;
+            padding: 1.2rem;
+            box-shadow: 0 10px 32px rgba(31, 38, 135, 0.25);
+        }
+
+        .seat-summary {
+            position: sticky;
+            top: 96px;
+        }
+
+        .seat-summary h3,
+        .seat-layout-card h3 {
+            color: #00d4ff;
+            margin-bottom: 0.8rem;
+        }
+
+        .seat-summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.8rem;
+            padding: 0.55rem 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            font-size: 0.92rem;
+        }
+
+        .seat-summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .seat-summary-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .seat-summary-value {
+            font-weight: 700;
+        }
+
+        .seat-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .legend-chip {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .legend-available {
+            background: rgba(0, 212, 255, 0.18);
+            border-color: rgba(0, 212, 255, 0.6);
+        }
+
+        .legend-selected {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: rgba(76, 175, 80, 0.85);
+        }
+
+        .legend-occupied {
+            background: rgba(244, 67, 54, 0.25);
+            border-color: rgba(244, 67, 54, 0.8);
+        }
+
+        .legend-blocked {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .seat-grid {
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .seat-row {
+            display: grid;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .row-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.65);
+            width: 26px;
+            text-align: center;
+        }
+
+        .seat-row.mode-bus {
+            grid-template-columns: 30px repeat(2, 1fr) 20px repeat(2, 1fr);
+        }
+
+        .seat-row.mode-train {
+            grid-template-columns: 30px repeat(3, 1fr) 20px repeat(3, 1fr);
+        }
+
+        .aisle-gap {
+            height: 100%;
+            border-left: 1px dashed rgba(255, 255, 255, 0.25);
+            border-right: 1px dashed rgba(255, 255, 255, 0.25);
+            min-height: 34px;
+        }
+
+        .car-seat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(130px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .seat-btn {
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 9px;
+            min-height: 38px;
+            background: rgba(0, 212, 255, 0.1);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0.4rem 0.45rem;
+        }
+
+        .seat-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 14px rgba(0, 212, 255, 0.3);
+        }
+
+        .seat-btn.selected {
+            background: rgba(76, 175, 80, 0.32);
+            border-color: rgba(76, 175, 80, 0.95);
+            box-shadow: 0 0 14px rgba(76, 175, 80, 0.35);
+        }
+
+        .seat-btn.occupied {
+            background: rgba(244, 67, 54, 0.25);
+            border-color: rgba(244, 67, 54, 0.9);
+            color: rgba(255, 255, 255, 0.8);
+            cursor: not-allowed;
+        }
+
+        .seat-btn.blocked {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.75);
+            cursor: not-allowed;
+        }
+
+        .seat-form {
+            margin-top: 1rem;
+        }
+
+        .seat-selected-note {
+            margin: 0.75rem 0;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .seat-submit {
+            width: 100%;
+        }
+
+        @media (max-width: 980px) {
+            .seat-layout-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .seat-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .seat-title {
+                font-size: 1.55rem;
+            }
+
+            .seat-row.mode-bus {
+                grid-template-columns: 24px repeat(2, minmax(0, 1fr)) 14px repeat(2, minmax(0, 1fr));
+            }
+
+            .seat-row.mode-train {
+                grid-template-columns: 24px repeat(3, minmax(0, 1fr)) 12px repeat(3, minmax(0, 1fr));
+            }
+
+            .car-seat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .seat-btn {
+                font-size: 0.85rem;
+                min-height: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="seat-header">
+            <h1 class="seat-title">🎟️ {{ seat_plan.title }}</h1>
+            <p class="seat-subtitle">{{ vehicle.name }} • {{ vehicle.type }} • {{ vehicle.price }}{{ vehicle.pricing_unit if vehicle.pricing_unit else '/day' }}</p>
+            <p class="seat-subtitle">{{ seat_plan.description }}</p>
+        </div>
+
+        <div class="seat-layout-wrap">
+            <div class="seat-summary">
+                <h3>Booking Details</h3>
+                <div class="seat-summary-row">
+                    <span class="seat-summary-label">Pickup</span>
+                    <span class="seat-summary-value">{{ search_params.get('pickup_date', 'Not set') }}</span>
+                </div>
+                <div class="seat-summary-row">
+                    <span class="seat-summary-label">Return</span>
+                    <span class="seat-summary-value">{{ search_params.get('return_date', 'Not set') }}</span>
+                </div>
+                <div class="seat-summary-row">
+                    <span class="seat-summary-label">From</span>
+                    <span class="seat-summary-value">{{ search_params.get('location', 'Not set') }}</span>
+                </div>
+                <div class="seat-summary-row">
+                    <span class="seat-summary-label">To</span>
+                    <span class="seat-summary-value">{{ search_params.get('destination', 'Not set') }}</span>
+                </div>
+                <div class="seat-summary-row">
+                    <span class="seat-summary-label">Max Seats</span>
+                    <span class="seat-summary-value">{{ seat_plan.max_select }}</span>
+                </div>
+
+                <form class="seat-form" method="POST" action="/book-vehicle" id="seatBookingForm">
+                    <input type="hidden" name="vehicle_name" value="{{ vehicle.name }}">
+                    <input type="hidden" name="price" value="{{ vehicle.price }}">
+                    <input type="hidden" name="pickup_date" value="{{ search_params.get('pickup_date', '') }}">
+                    <input type="hidden" name="return_date" value="{{ search_params.get('return_date', '') }}">
+                    <input type="hidden" name="location" value="{{ search_params.get('location', '') }}">
+                    <input type="hidden" name="destination" value="{{ search_params.get('destination', '') }}">
+                    <input type="hidden" name="seat_selection" id="seatSelectionInput" value="">
+                    <input type="hidden" name="transport_type" value="{{ vehicle.type }}">
+                    <input type="hidden" id="maxSelectInput" value="{{ seat_plan.max_select }}">
+
+                    <p class="seat-selected-note" id="seatSelectedNote">Select at least one seat to continue.</p>
+                    <button type="submit" class="btn btn-primary seat-submit" id="seatContinueBtn" disabled>✅ Continue to Payment</button>
+                </form>
+            </div>
+
+            <div class="seat-layout-card">
+                <h3>Available Seats</h3>
+
+                <div class="seat-legend">
+                    <span class="legend-item"><span class="legend-chip legend-available"></span> Available</span>
+                    <span class="legend-item"><span class="legend-chip legend-selected"></span> Selected</span>
+                    <span class="legend-item"><span class="legend-chip legend-occupied"></span> Occupied</span>
+                    {% if seat_plan.mode == 'car' %}
+                    <span class="legend-item"><span class="legend-chip legend-blocked"></span> Not Selectable</span>
+                    {% endif %}
+                </div>
+
+                {% if seat_plan.mode in ['bus', 'train'] %}
+                <div class="seat-grid">
+                    {% for row in seat_plan.seat_rows %}
+                    <div class="seat-row mode-{{ seat_plan.mode }}">
+                        <span class="row-label">{{ row.row }}</span>
+                        {% for seat in row.seats %}
+                            {% if seat_plan.mode == 'bus' and loop.index == 3 %}
+                            <span class="aisle-gap" aria-hidden="true"></span>
+                            {% endif %}
+                            {% if seat_plan.mode == 'train' and loop.index == 4 %}
+                            <span class="aisle-gap" aria-hidden="true"></span>
+                            {% endif %}
+                            <button
+                                type="button"
+                                class="seat-btn {% if not seat.available %}occupied{% endif %}"
+                                data-seat="{{ seat.id }}"
+                                {% if not seat.available %}disabled{% endif %}
+                            >{{ seat.label }}</button>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="car-seat-grid">
+                    {% for seat in seat_plan.car_seats %}
+                    <button
+                        type="button"
+                        class="seat-btn {% if not seat.available %}blocked{% endif %}"
+                        data-seat="{{ seat.id }}"
+                        {% if not seat.available %}disabled{% endif %}
+                    >{{ seat.label }}</button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        (function () {
+            const maxSelect = Number(document.getElementById('maxSelectInput').value || '1');
+            const seatButtons = document.querySelectorAll('.seat-btn:not(.occupied):not(.blocked)');
+            const seatInput = document.getElementById('seatSelectionInput');
+            const note = document.getElementById('seatSelectedNote');
+            const continueBtn = document.getElementById('seatContinueBtn');
+            const selected = new Set();
+
+            function syncSelection() {
+                const seats = Array.from(selected).sort();
+                seatInput.value = seats.join(', ');
+
+                if (seats.length === 0) {
+                    note.textContent = 'Select at least one seat to continue.';
+                    continueBtn.disabled = true;
+                    return;
+                }
+
+                note.textContent = 'Selected seats: ' + seats.join(', ');
+                continueBtn.disabled = false;
+            }
+
+            seatButtons.forEach((button) => {
+                button.addEventListener('click', function () {
+                    const seatCode = this.dataset.seat;
+
+                    if (selected.has(seatCode)) {
+                        selected.delete(seatCode);
+                        this.classList.remove('selected');
+                        syncSelection();
+                        return;
+                    }
+
+                    if (selected.size >= maxSelect) {
+                        note.textContent = 'You can select up to ' + maxSelect + ' seats for this transport.';
+                        return;
+                    }
+
+                    selected.add(seatCode);
+                    this.classList.add('selected');
+                    syncSelection();
+                });
+            });
+
+            syncSelection();
+        })();
+    </script>
+</body>
+</html>

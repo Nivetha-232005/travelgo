@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vehicle.name }} - Vehicle Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-block;
+            color: #00d4ff;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            color: #ff006e;
+        }
+
+        /* Details Container */
+        .details-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .vehicle-showcase {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 320px;
+            margin-bottom: 1rem;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .vehicle-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .vehicle-type {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff006e, #7b2ff7);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff, #ffbe0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-rating {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #ffbe0b;
+        }
+
+        /* Info Section */
+        .vehicle-info {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .info-section {
+            margin-bottom: 2rem;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .feature-item {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 3px solid #00d4ff;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-icon {
+            font-size: 1.3rem;
+        }
+
+        .specs-table {
+            width: 100%;
+        }
+
+        .spec-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .spec-value {
+            color: #a0a0a0;
+        }
+
+        .description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #a0a0a0;
+            background: rgba(0, 212, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #7b2ff7;
+        }
+
+        /* Booking Section */
+        .booking-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 247, 0.1));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .booking-section h2 {
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+        }
+
+        .booking-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .form-group input {
+            padding: 0.8rem;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .booking-note {
+            grid-column: 1 / -1;
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .vehicle-subsection {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .section-title-spaced {
+            margin-bottom: 1.5rem;
+        }
+
+        .pickup-location-list {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .pickup-location-badge {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 47, 247, 0.2));
+        }
+
+        .section-margin-bottom {
+            margin-bottom: 2rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .booking-btn {
+            grid-column: 1 / -1;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .booking-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .seat-map-link {
+            margin-top: 1rem;
+            display: inline-block;
+            text-decoration: none;
+            color: #ffbe0b;
+            font-weight: 700;
+            border: 1px solid rgba(255, 190, 11, 0.6);
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(255, 190, 11, 0.12);
+            transition: all 0.25s ease;
+        }
+
+        .seat-map-link:hover {
+            background: #ffbe0b;
+            color: #111;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .reviews-section h2 {
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-item {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 3px solid #7b2ff7;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .reviewer-name {
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .review-rating {
+            color: #ffbe0b;
+            font-weight: 600;
+        }
+
+        .review-text {
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+
+        /* Highlight Badges */
+        .badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(26, 26, 46, 0.95);
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            color: #a0a0a0;
+        }
+
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #ff006e;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .details-container {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="/vehicles" class="back-btn">← Back to Vehicle Search</a>
+
+        <!-- Vehicle Details -->
+        <div class="details-container">
+            <!-- Showcase Section -->
+            <div class="vehicle-showcase">
+                <div class="vehicle-image">
+                    <img src="{{ vehicle.image_url }}" alt="{{ vehicle.name }}" loading="eager">
+                </div>
+                <div class="vehicle-name">{{ vehicle.name }}</div>
+                <div class="vehicle-type">{{ vehicle.type }}</div>
+                <div class="vehicle-price">{{ vehicle.price_per_day }}{{ vehicle.pricing_unit if vehicle.pricing_unit else '/day' }}</div>
+                <div class="vehicle-rating">⭐ {{ vehicle.rating }} Rating</div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="vehicle-info">
+                <!-- Description -->
+                <div class="info-section">
+                    <p class="description">{{ vehicle.description }}</p>
+                </div>
+
+                <!-- Key Specs -->
+                <div class="info-section">
+                    <div class="section-title">📋 Specifications</div>
+                    <table class="specs-table">
+                        <tr class="spec-row">
+                            <td class="spec-label">Transmission:</td>
+                            <td class="spec-value">{{ vehicle.transmission }}</td>
+                        </tr>
+                        <tr class="spec-row">
+                            <td class="spec-label">Passengers:</td>
+                            <td class="spec-value">{{ vehicle.passengers }}</td>
+                        </tr>
+                        <tr class="spec-row">
+                            <td class="spec-label">Luggage:</td>
+                            <td class="spec-value">{{ vehicle.luggage }}</td>
+                        </tr>
+                        <tr class="spec-row">
+                            <td class="spec-label">Fuel Type:</td>
+                            <td class="spec-value">{{ vehicle.fuel }}</td>
+                        </tr>
+                        <tr class="spec-row">
+                            <td class="spec-label">Mileage:</td>
+                            <td class="spec-value">{{ vehicle.mileage }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Insurance & Policy -->
+                <div class="info-section">
+                    <div class="section-title">🛡️ Insurance & Policy</div>
+                    <div class="badge">{{ vehicle.insurance }}</div>
+                    <div class="badge">{{ vehicle.cancellation }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="booking-section vehicle-subsection">
+            <div class="section-title section-title-spaced">✨ Features Included</div>
+            <div class="features-grid">
+                {% for feature in vehicle.features %}
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>{{ feature }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pickup Locations -->
+        <div class="booking-section vehicle-subsection section-margin-bottom">
+            <div class="section-title section-title-spaced">📍 Pickup Locations</div>
+            <div class="pickup-location-list">
+                {% for location in vehicle.pickup_locations %}
+                <div class="badge pickup-location-badge">
+                    📍 {{ location }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Booking Section -->
+        <div class="booking-section">
+            <h2>📅 Reserve This Vehicle</h2>
+            <form class="booking-form" method="POST" action="/book-vehicle">
+                <div class="form-group">
+                    <label for="location">📍 Pickup Location</label>
+                    <input type="text" id="location" name="location" placeholder="Select from locations above" value="{{ request.args.get('location', '') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="destination">📌 Destination</label>
+                    <input type="text" id="destination" name="destination" placeholder="Destination" value="{{ request.args.get('destination', '') }}" required>
+                </div>
+                <input type="hidden" name="pickup_date" value="{{ request.args.get('pickup_date', '') }}">
+                <input type="hidden" name="return_date" value="{{ request.args.get('return_date', '') }}">
+                <input type="hidden" name="vehicle_name" value="{{ vehicle.name }}">
+                <p class="booking-note">Pickup/return dates are reused from your vehicle search.</p>
+                <button type="submit" class="booking-btn">🎉 Complete Booking</button>
+            </form>
+            <a class="seat-map-link" href="{{ url_for('transport_seats', vehicle_id=vehicle.id, location=request.args.get('location', ''), destination=request.args.get('destination', ''), pickup_date=request.args.get('pickup_date', ''), return_date=request.args.get('return_date', '')) }}">🎟️ Choose from Seat Map</a>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2>⭐ Customer Reviews</h2>
+            {% for review in vehicle.reviews %}
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="reviewer-name">{{ review.user }}</span>
+                    <span class="review-rating">⭐ {{ review.rating }}/5</span>
+                </div>
+                <p class="review-text">{{ review.text }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="/dashboard">Home</a>
+            <a href="/vehicles">Vehicles</a>
+            <a href="/offers">Offers</a>
+            <a href="/profile">Profile</a>
+        </div>
+        <p>&copy; 2024 TravelGo. All rights reserved. | Travel Smart, Travel Safe</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

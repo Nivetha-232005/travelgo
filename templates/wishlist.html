@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>❤️ My Wishlist</h1>
+            <p>Your collection of favorite travel destinations and experiences</p>
+        </div>
+
+        {% if wishlist %}
+        <div class="hero" style="padding: 2rem 2rem 1rem;">
+            <h2 style="margin-bottom: 0.5rem; color: #00d4ff;">{{ wishlist|length }} Items Saved</h2>
+            <p style="color: rgba(255,255,255,0.7);">Coming back soon? Manage your favorite trips here</p>
+        </div>
+
+        <div class="product-grid">
+            {% for item in wishlist %}
+            <div class="product-card">
+                <div class="product-image">{{ item.image }}</div>
+                <div class="product-content">
+                    <div class="product-title">{{ item.name }}</div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem;">
+                        Saved {{ item.saved_date }}
+                    </div>
+                    <div class="product-price" style="margin-bottom: 1rem;">{{ item.price }}</div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" style="flex: 1;">Book Now</button>
+                        <button class="btn btn-danger" style="padding: 0.7rem 1rem;">Remove</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 6rem 2rem; background: rgba(255,255,255,0.03); border-radius: 20px; margin: 3rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">💭</div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: #00d4ff;">Your Wishlist is Empty</h3>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 2rem; font-size: 1.1rem;">
+                Save your favorite destinations and experiences for later!
+            </p>
+            <a href="/search" class="btn btn-primary" style="padding: 1rem 2rem;">Start Exploring</a>
+        </div>
+        {% endif %}
+
+        <!-- Recommendations Section -->
+        <div style="margin-top: 5rem; padding: 3rem; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 247, 0.1)); border-radius: 20px;">
+            <h2 style="margin-bottom: 2rem; text-align: center; color: #00d4ff;">Recommended for You</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-image">🗼</div>
+                    <div class="product-content">
+                        <div class="product-title">Parisian Romance</div>
+                        <div class="product-description">Experience the charm of the City of Light</div>
+                        <div class="product-rating">⭐ 4.9/5</div>
+                        <div class="product-price">₹99,600</div>
+                        <button class="btn btn-primary" style="width: 100%;">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">🏖️</div>
+                    <div class="product-content">
+                        <div class="product-title">Tropical Paradise</div>
+                        <div class="product-description">Relax on pristine beaches and turquoise waters</div>
+                        <div class="product-rating">⭐ 4.8/5</div>
+                        <div class="product-price">₹78,850</div>
+                        <button class="btn btn-primary" style="width: 100%;">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">🎌</div>
+                    <div class="product-content">
+                        <div class="product-title">Tokyo Adventure</div>
+                        <div class="product-description">Dive into culture and modern technology</div>
+                        <div class="product-rating">⭐ 4.7/5</div>
+                        <div class="product-price">₹1,24,500</div>
+                        <button class="btn btn-primary" style="width: 100%;">Add to Wishlist</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image">🏜️</div>
+                    <div class="product-content">
+                        <div class="product-title">Desert Safari</div>
+                        <div class="product-description">Thrilling dunes and sparkling nights</div>
+                        <div class="product-rating">⭐ 4.6/5</div>
+                        <div class="product-price">₹66,400</div>
+                        <button class="btn btn-primary" style="width: 100%;">Add to Wishlist</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

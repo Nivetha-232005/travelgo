@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGo - Your Future Travel Companion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="no-nav-marquee">
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="#features" class="btn btn-secondary">Features</a>
+            <a href="#about" class="btn btn-secondary">About</a>
+            <a href="/login" class="btn btn-secondary">Login</a>
+            <a href="/register" class="btn btn-primary">Get Started</a>
+        </div>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Explore the World with TravelGo</h1>
+            <p>Your AI-powered travel companion for discovering, booking, and experiencing amazing destinations</p>
+            <div class="btn-group">
+                <a href="/login" class="btn btn-primary">Start Exploring</a>
+                <a href="/register" class="btn btn-secondary">Create Account</a>
+            </div>
+        </div>
+
+        <div class="features" id="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Smart Search</h3>
+                <p>Find the perfect destinations with intelligent recommendations based on your preferences</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3>Secure Booking</h3>
+                <p>Safe and encrypted transactions for complete peace of mind with every booking</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h3>Reviews & Ratings</h3>
+                <p>Read genuine reviews and ratings from millions of travelers worldwide</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛫</div>
+                <h3>Best Deals</h3>
+                <p>Get exclusive offers and discounts on flights, hotels, and experiences</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏨</div>
+                <h3>Hotel Booking</h3>
+                <p>Compare and book from thousands of hotels worldwide at the best prices</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <h3>Save Wishlist</h3>
+                <p>Create and manage your favorite trips and destinations for later</p>
+            </div>
+        </div>
+
+        <!-- Why Choose Us Section -->
+        <div class="home-why-section" id="about">
+            <h2 class="home-section-title">Why Choose TravelGo?</h2>
+            <div class="home-why-grid">
+                <div class="home-why-card">
+                    <div class="home-why-icon">🌍</div>
+                    <h3 class="home-why-heading">Global Coverage</h3>
+                    <p class="home-why-text">Access to destinations across all continents with local expertise</p>
+                </div>
+                <div class="home-why-card">
+                    <div class="home-why-icon">💰</div>
+                    <h3 class="home-why-heading">Best Price Guarantee</h3>
+                    <p class="home-why-text">We match the lowest prices or refund the difference</p>
+                </div>
+                <div class="home-why-card">
+                    <div class="home-why-icon">🎯</div>
+                    <h3 class="home-why-heading">Personalized Experience</h3>
+                    <p class="home-why-text">AI recommendations tailored to your travel style</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="home-stats-section">
+            <h2 class="home-section-title">Trusted by Millions</h2>
+            <div class="dashboard-grid">
+                <div class="stat-card home-stat-static">
+                    <div class="stat-number">2.5M+</div>
+                    <div class="stat-label">Happy Travelers</div>
+                </div>
+                <div class="stat-card home-stat-static">
+                    <div class="stat-number">185</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat-card home-stat-static">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Hotels & Stays</div>
+                </div>
+                <div class="stat-card home-stat-static">
+                    <div class="stat-number">4.8★</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="home-cta-section">
+            <h2 class="home-cta-title">Ready to Start Your Journey?</h2>
+            <p class="home-cta-text">Join millions of travelers using TravelGo to discover and book amazing experiences</p>
+            <a href="/register" class="btn btn-primary home-cta-btn">Create Your Account Now</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Our Story</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+                <a href="#">Travel Insurance</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+                <a href="#">Accessibility</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

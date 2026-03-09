@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGo - My Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>My Profile</h1>
+            <p>Manage your account and travel preferences</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+            <!-- Profile Card -->
+            <div class="form-container">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">👤</div>
+                    <h3 style="margin-bottom: 0.5rem;">{{ user.name if user else 'User' }}</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7);">{{ user.email if user else '' }}</p>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Member Since</label>
+                    <p>{% if user %}{{ user.get('created_at', 'N/A') }}{% endif %}</p>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%;">Edit Profile</button>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="form-container">
+                <h3 style="margin-bottom: 1.5rem;">Travel Statistics</h3>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Total Bookings</label>
+                    <p style="font-size: 2rem; color: #00d4ff; font-weight: bold;">{{ total_bookings }}</p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Traveler Rating</label>
+                    <p style="font-size: 2rem; color: #ffc107; font-weight: bold;">⭐ 4.8/5.0</p>
+                </div>
+
+                <div>
+                    <label style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Loyalty Points</label>
+                    <p style="font-size: 2rem; color: #7b2ff7; font-weight: bold;">2,450 pts</p>
+                </div>
+            </div>
+
+            <!-- Preferences Card -->
+            <div class="form-container">
+                <h3 style="margin-bottom: 1.5rem;">Preferences</h3>
+                
+                <div class="form-group">
+                    <label>Preferred Currency</label>
+                    <select style="width: 100%; padding: 0.85rem; margin-bottom: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; background: rgba(255, 255, 255, 0.05); color: #fff;">
+                        <option>USD (US Dollar)</option>
+                        <option>EUR (Euro)</option>
+                        <option>GBP (British Pound)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Travel Style</label>
+                    <select style="width: 100%; padding: 0.85rem; margin-bottom: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; background: rgba(255, 255, 255, 0.05); color: #fff;">
+                        <option>Adventure</option>
+                        <option>Luxury</option>
+                        <option>Budget</option>
+                        <option>Family</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Preferences</button>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div style="margin-top: 2rem;">
+            <h2 style="margin-bottom: 1.5rem;">Recent Bookings</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Destination</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Paris, France</td>
+                            <td>15 March 2026</td>
+                            <td><span class="badge badge-success">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tokyo, Japan</td>
+                            <td>22 April 2026</td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGo - Travel Tips</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Travel Tips & Guides</h1>
+            <p>Learn from experienced travelers and make the most of your journey</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+            {% for tip in tips %}
+            <div style="
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                padding: 2rem;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            " class="tip-card" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 0 30px rgba(0, 212, 255, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">{{ tip.icon }}</div>
+                <h3 style="margin-bottom: 1rem; text-align: center;">{{ tip.title }}</h3>
+                <p style="color: rgba(255, 255, 255, 0.8); text-align: center; line-height: 1.6;">{{ tip.description }}</p>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Read More</button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Featured Article -->
+        <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 2.5rem; margin: 3rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+                <div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✈️</div>
+                    <h2 style="margin-bottom: 1rem;">How to Travel Smart on a Budget</h2>
+                    <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Learn proven strategies from budget travelers around the world. Discover how to find cheap flights, 
+                        affordable accommodations, and experience destinations without breaking the bank.
+                    </p>
+                    <button class="btn btn-primary">Read Full Article</button>
+                </div>
+                <div style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); border-radius: 15px; height: 300px; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; font-size: 4rem;">💰</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div style="margin: 3rem 0;">
+            <h2 style="margin-bottom: 2rem; text-align: center;">Browse by Category</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <a href="#" class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏖️</div>
+                    <h3>Beach Destinations</h3>
+                    <p>45 articles</p>
+                </a>
+                <a href="#" class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏔️</div>
+                    <h3>Mountain Adventures</h3>
+                    <p>32 articles</p>
+                </a>
+                <a href="#" class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🍜</div>
+                    <h3>Food & Cuisine</h3>
+                    <p>28 articles</p>
+                </a>
+                <a href="#" class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🛫</div>
+                    <h3>Travel Hacks</h3>
+                    <p>56 articles</p>
+                </a>
+                <a href="#" class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🗺️</div>
+                    <h3>Cultural Insights</h3>
+                    <p>38 articles</p>
+                </a>
+                <a href="#" class="feature-card" style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏨</div>
+                    <h3>Accommodation Guide</h3>
+                    <p>31 articles</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Expert Recommendations -->
+        <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 2rem; margin: 2rem 0;">
+            <h2 style="margin-bottom: 1.5rem;">💡 Pro Tips from Our Community</h2>
+            <div style="display: grid; gap: 1rem;">
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #00d4ff;">
+                    <p style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.5rem;">Book flights on Tuesday for the best prices</p>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Airlines often release sales on Tuesdays.</p>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #7b2ff7;">
+                    <p style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.5rem;">Travel during shoulder seasons for better deals</p>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Avoid peak season to save money and experience fewer crowds.</p>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #ff006e;">
+                    <p style="color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 0.5rem;">Use public transportation at your destination</p>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">It's cheaper than taxis and gives you real local experience.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

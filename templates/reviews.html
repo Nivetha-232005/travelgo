@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews & Ratings - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>⭐ Reviews & Ratings</h1>
+            <p>Share your travel experiences and read what others say</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin: 3rem 0;">
+            <!-- Write Review Form -->
+            <div>
+                <div class="form-container">
+                    <h2>Write a Review</h2>
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" id="destination" name="destination" placeholder="Which place did you visit?" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rating">Your Rating</label>
+                            <select id="rating" name="rating" required>
+                                <option value="">Select Rating</option>
+                                <option value="5">⭐⭐⭐⭐⭐ Excellent (5/5)</option>
+                                <option value="4">⭐⭐⭐⭐ Good (4/5)</option>
+                                <option value="3">⭐⭐⭐ Average (3/5)</option>
+                                <option value="2">⭐⭐ Poor (2/5)</option>
+                                <option value="1">⭐ Very Poor (1/5)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review">Your Review</label>
+                            <textarea id="review" name="review" placeholder="Share your experience..." rows="6" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reviews List -->
+            <div>
+                <h2 style="margin-bottom: 2rem; color: #00d4ff; font-size: 1.5rem;">Recent Reviews</h2>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem; max-height: 600px; overflow-y: auto;">
+                    {% for review in reviews %}
+                    <div class="feature-card" style="text-align: left;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.8rem;">
+                            <div>
+                                <div style="font-weight: 700; margin-bottom: 0.2rem;">{{ review.user_name }}</div>
+                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">{{ review.created_at }}</div>
+                            </div>
+                            <div class="badge badge-success">
+                                {% if review.rating == 5 %}
+                                    ⭐⭐⭐⭐⭐
+                                {% elif review.rating == 4 %}
+                                    ⭐⭐⭐⭐
+                                {% elif review.rating == 3 %}
+                                    ⭐⭐⭐
+                                {% elif review.rating == 2 %}
+                                    ⭐⭐
+                                {% else %}
+                                    ⭐
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="color: #00d4ff; font-weight: 700; margin-bottom: 0.8rem;">{{ review.destination }}</div>
+                        <p style="color: rgba(255,255,255,0.8); line-height: 1.6;">{{ review.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

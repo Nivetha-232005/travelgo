@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <!-- Payment Header -->
+        <div class="payment-header">
+            <div class="payment-header-icon">💳</div>
+            <h1 class="payment-header-title">Secure Payment</h1>
+            <p class="payment-header-subtitle">Complete your booking by choosing a payment method</p>
+        </div>
+
+        <div class="payment-layout">
+            <!-- Order Summary Sidebar -->
+            <div class="payment-summary-card">
+                <h3 class="payment-summary-heading">📋 Order Summary</h3>
+                <div class="payment-summary-details">
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Booking Type</span>
+                        <span class="payment-summary-value">
+                            {% if booking_type == 'hotel' %}🏨 Hotel
+                            {% elif booking_type == 'flight' %}✈️ Flight
+                            {% elif booking_type == 'vehicle' %}🚗 Vehicle
+                            {% elif booking_type == 'plan' %}🗺️ Travel Plan
+                            {% else %}🎯 Booking
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    {% if booking_data.get('name') or booking_data.get('hotel_name') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Name</span>
+                        <span class="payment-summary-value">{{ booking_data.get('name') or booking_data.get('hotel_name') or booking_data.get('plan_name') or booking_data.get('vehicle_name') or booking_data.get('airline') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('destination') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Destination</span>
+                        <span class="payment-summary-value">{{ booking_data.get('destination') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('from_city') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Route</span>
+                        <span class="payment-summary-value">{{ booking_data.get('from_city') }} → {{ booking_data.get('to_city') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('travelers') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Travelers</span>
+                        <span class="payment-summary-value">{{ booking_data.get('travelers') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('passengers') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Passengers</span>
+                        <span class="payment-summary-value">{{ booking_data.get('passengers') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('rooms') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Rooms</span>
+                        <span class="payment-summary-value">{{ booking_data.get('rooms') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('check_in') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Check-in</span>
+                        <span class="payment-summary-value">{{ booking_data.get('check_in') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('check_out') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Check-out</span>
+                        <span class="payment-summary-value">{{ booking_data.get('check_out') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('pickup_date') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Pickup</span>
+                        <span class="payment-summary-value">{{ booking_data.get('pickup_date') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('return_date') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Return</span>
+                        <span class="payment-summary-value">{{ booking_data.get('return_date') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if booking_data.get('seat_selection') %}
+                    <div class="payment-summary-row">
+                        <span class="payment-summary-label">Selected Seats</span>
+                        <span class="payment-summary-value">{{ booking_data.get('seat_selection') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="payment-summary-total">
+                    <span>Total Amount</span>
+                    <span class="payment-total-amount">{{ amount }}</span>
+                </div>
+
+                <div class="payment-secure-badge">
+                    <span>🔒</span>
+                    <span>256-bit SSL Encrypted</span>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods-section">
+                <h3 class="payment-methods-heading">Choose Payment Method</h3>
+
+                <!-- Payment Method Tabs -->
+                <div class="payment-tabs">
+                    <button class="payment-tab active" onclick="switchPaymentTab('upi')" data-tab="upi">
+                        <span class="payment-tab-icon">📱</span>
+                        <span class="payment-tab-text">UPI</span>
+                    </button>
+                    <button class="payment-tab" onclick="switchPaymentTab('card')" data-tab="card">
+                        <span class="payment-tab-icon">💳</span>
+                        <span class="payment-tab-text">Card</span>
+                    </button>
+                    <button class="payment-tab" onclick="switchPaymentTab('netbanking')" data-tab="netbanking">
+                        <span class="payment-tab-icon">🏦</span>
+                        <span class="payment-tab-text">Net Banking</span>
+                    </button>
+                    <button class="payment-tab" onclick="switchPaymentTab('wallet')" data-tab="wallet">
+                        <span class="payment-tab-icon">👝</span>
+                        <span class="payment-tab-text">Wallet</span>
+                    </button>
+                </div>
+
+                <!-- UPI Payment Section -->
+                <div class="payment-panel active" id="panel-upi">
+                    <div class="upi-options">
+                        <!-- UPI QR Scanner -->
+                        <div class="upi-qr-section">
+                            <h4 class="upi-section-title">Scan QR Code to Pay</h4>
+                            <div class="upi-qr-container">
+                                <div class="upi-qr-code" id="upiQrCode">
+                                    <img id="upiQrImage" class="upi-qr-image" alt="UPI payment QR code" referrerpolicy="no-referrer">
+                                </div>
+                                <p class="upi-qr-fallback" id="upiQrFallback">Generating QR code...</p>
+                                <p class="upi-qr-label">Scan with any UPI app</p>
+                                <div class="upi-app-icons">
+                                    <span class="upi-app" title="Google Pay">
+                                        <span class="upi-app-emoji">🔵</span>
+                                        <span>GPay</span>
+                                    </span>
+                                    <span class="upi-app" title="PhonePe">
+                                        <span class="upi-app-emoji">🟣</span>
+                                        <span>PhonePe</span>
+                                    </span>
+                                    <span class="upi-app" title="Paytm">
+                                        <span class="upi-app-emoji">🔷</span>
+                                        <span>Paytm</span>
+                                    </span>
+                                    <span class="upi-app" title="BHIM">
+                                        <span class="upi-app-emoji">🟢</span>
+                                        <span>BHIM</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upi-divider">
+                            <span class="upi-divider-line"></span>
+                            <span class="upi-divider-text">OR</span>
+                            <span class="upi-divider-line"></span>
+                        </div>
+
+                        <!-- UPI ID Entry -->
+                        <div class="upi-id-section">
+                            <h4 class="upi-section-title">Pay using UPI ID</h4>
+                            <form id="upiPaymentForm" action="/process-payment" method="POST">
+                                <!-- Hidden fields to carry booking data -->
+                                {% for key, value in booking_data.items() %}
+                                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                                {% endfor %}
+                                <input type="hidden" name="booking_type" value="{{ booking_type }}">
+                                <input type="hidden" name="payment_method" value="upi">
+                                <input type="hidden" name="amount" value="{{ amount }}">
+
+                                <div class="upi-id-input-group">
+                                    <div class="upi-id-field">
+                                        <label for="upiId">Enter UPI ID</label>
+                                        <input type="text" id="upiId" name="upi_id" placeholder="yourname@upi" required
+                                               pattern="[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z][a-zA-Z]{2,64}"
+                                               title="Enter a valid UPI ID (e.g., name@upi)">
+                                        <span class="upi-id-hint">Example: name@okicici, name@ybl, name@paytm</span>
+                                    </div>
+                                    <button type="button" class="btn-verify-upi" onclick="verifyUPI()">Verify</button>
+                                </div>
+
+                                <div class="upi-verify-status" id="upiVerifyStatus"></div>
+
+                                <button type="submit" class="btn btn-primary payment-submit-btn" id="upiPayBtn" disabled>
+                                    <span class="payment-btn-icon">🔒</span>
+                                    Pay {{ amount }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Payment Section -->
+                <div class="payment-panel" id="panel-card">
+                    <form action="/process-payment" method="POST">
+                        {% for key, value in booking_data.items() %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endfor %}
+                        <input type="hidden" name="booking_type" value="{{ booking_type }}">
+                        <input type="hidden" name="amount" value="{{ amount }}">
+
+                        <div class="card-type-toggle">
+                            <label class="card-type-option">
+                                <input type="radio" name="payment_method" value="credit_card" checked>
+                                <span class="card-type-label">💳 Credit Card</span>
+                            </label>
+                            <label class="card-type-option">
+                                <input type="radio" name="payment_method" value="debit_card">
+                                <span class="card-type-label">💳 Debit Card</span>
+                            </label>
+                        </div>
+
+                        <div class="card-preview" id="cardPreview">
+                            <div class="card-preview-chip">◻️</div>
+                            <div class="card-preview-number" id="cardPreviewNumber">•••• •••• •••• ••••</div>
+                            <div class="card-preview-bottom">
+                                <div>
+                                    <span class="card-preview-label">Card Holder</span>
+                                    <span class="card-preview-name" id="cardPreviewName">YOUR NAME</span>
+                                </div>
+                                <div>
+                                    <span class="card-preview-label">Expires</span>
+                                    <span class="card-preview-expiry" id="cardPreviewExpiry">MM/YY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" name="card_number" placeholder="1234 5678 9012 3456"
+                                   maxlength="19" required oninput="formatCardNumber(this); updateCardPreview()">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Cardholder Name</label>
+                            <input type="text" id="cardName" name="card_name" placeholder="John Doe" required
+                                   oninput="updateCardPreview()">
+                        </div>
+                        <div class="card-row">
+                            <div class="form-group">
+                                <label for="cardExpiry">Expiry Date</label>
+                                <input type="text" id="cardExpiry" name="card_expiry" placeholder="MM/YY"
+                                       maxlength="5" required oninput="formatExpiry(this); updateCardPreview()">
+                            </div>
+                            <div class="form-group">
+                                <label for="cardCvv">CVV</label>
+                                <input type="password" id="cardCvv" name="card_cvv" placeholder="•••"
+                                       maxlength="4" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary payment-submit-btn">
+                            <span class="payment-btn-icon">🔒</span>
+                            Pay {{ amount }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Net Banking Section -->
+                <div class="payment-panel" id="panel-netbanking">
+                    <form action="/process-payment" method="POST">
+                        {% for key, value in booking_data.items() %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endfor %}
+                        <input type="hidden" name="booking_type" value="{{ booking_type }}">
+                        <input type="hidden" name="payment_method" value="net_banking">
+                        <input type="hidden" name="amount" value="{{ amount }}">
+
+                        <h4 class="nb-section-title">Popular Banks</h4>
+                        <div class="bank-grid">
+                            <label class="bank-option">
+                                <input type="radio" name="bank" value="sbi" required>
+                                <div class="bank-card">
+                                    <span class="bank-icon">🏦</span>
+                                    <span class="bank-name">SBI</span>
+                                </div>
+                            </label>
+                            <label class="bank-option">
+                                <input type="radio" name="bank" value="hdfc">
+                                <div class="bank-card">
+                                    <span class="bank-icon">🏛️</span>
+                                    <span class="bank-name">HDFC</span>
+                                </div>
+                            </label>
+                            <label class="bank-option">
+                                <input type="radio" name="bank" value="icici">
+                                <div class="bank-card">
+                                    <span class="bank-icon">🏢</span>
+                                    <span class="bank-name">ICICI</span>
+                                </div>
+                            </label>
+                            <label class="bank-option">
+                                <input type="radio" name="bank" value="axis">
+                                <div class="bank-card">
+                                    <span class="bank-icon">🏗️</span>
+                                    <span class="bank-name">Axis</span>
+                                </div>
+                            </label>
+                            <label class="bank-option">
+                                <input type="radio" name="bank" value="kotak">
+                                <div class="bank-card">
+                                    <span class="bank-icon">🏘️</span>
+                                    <span class="bank-name">Kotak</span>
+                                </div>
+                            </label>
+                            <label class="bank-option">
+                                <input type="radio" name="bank" value="bob">
+                                <div class="bank-card">
+                                    <span class="bank-icon">🏚️</span>
+                                    <span class="bank-name">BOB</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-group nb-other-bank">
+                            <label for="otherBank">Or select other bank</label>
+                            <select id="otherBank" name="other_bank">
+                                <option value="">-- Select Bank --</option>
+                                <option value="pnb">Punjab National Bank</option>
+                                <option value="canara">Canara Bank</option>
+                                <option value="union">Union Bank</option>
+                                <option value="idbi">IDBI Bank</option>
+                                <option value="yes">Yes Bank</option>
+                                <option value="indusind">IndusInd Bank</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary payment-submit-btn">
+                            <span class="payment-btn-icon">🔒</span>
+                            Pay {{ amount }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Wallet Section -->
+                <div class="payment-panel" id="panel-wallet">
+                    <form action="/process-payment" method="POST">
+                        {% for key, value in booking_data.items() %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                        {% endfor %}
+                        <input type="hidden" name="booking_type" value="{{ booking_type }}">
+                        <input type="hidden" name="payment_method" value="wallet">
+                        <input type="hidden" name="amount" value="{{ amount }}">
+
+                        <div class="wallet-grid">
+                            <label class="wallet-option">
+                                <input type="radio" name="wallet" value="paytm" required>
+                                <div class="wallet-card">
+                                    <span class="wallet-icon">🔷</span>
+                                    <span class="wallet-name">Paytm</span>
+                                    <span class="wallet-balance">Check Balance</span>
+                                </div>
+                            </label>
+                            <label class="wallet-option">
+                                <input type="radio" name="wallet" value="phonepe">
+                                <div class="wallet-card">
+                                    <span class="wallet-icon">🟣</span>
+                                    <span class="wallet-name">PhonePe</span>
+                                    <span class="wallet-balance">Check Balance</span>
+                                </div>
+                            </label>
+                            <label class="wallet-option">
+                                <input type="radio" name="wallet" value="amazonpay">
+                                <div class="wallet-card">
+                                    <span class="wallet-icon">🟠</span>
+                                    <span class="wallet-name">Amazon Pay</span>
+                                    <span class="wallet-balance">Check Balance</span>
+                                </div>
+                            </label>
+                            <label class="wallet-option">
+                                <input type="radio" name="wallet" value="mobikwik">
+                                <div class="wallet-card">
+                                    <span class="wallet-icon">🔴</span>
+                                    <span class="wallet-name">MobiKwik</span>
+                                    <span class="wallet-balance">Check Balance</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-group wallet-phone-group">
+                            <label for="walletPhone">Mobile Number</label>
+                            <input type="tel" id="walletPhone" name="wallet_phone" placeholder="+91 98765 43210"
+                                   maxlength="15" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary payment-submit-btn">
+                            <span class="payment-btn-icon">🔒</span>
+                            Pay {{ amount }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Security Badges -->
+                <div class="payment-security-badges">
+                    <div class="security-badge-item">
+                        <span>🔒</span>
+                        <span>Secure Payment</span>
+                    </div>
+                    <div class="security-badge-item">
+                        <span>🛡️</span>
+                        <span>Buyer Protection</span>
+                    </div>
+                    <div class="security-badge-item">
+                        <span>↩️</span>
+                        <span>Easy Refunds</span>
+                    </div>
+                    <div class="security-badge-item">
+                        <span>📞</span>
+                        <span>24/7 Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

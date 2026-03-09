@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ error_code }} - {{ error_title }} | TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="no-nav-marquee">
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        {% if error_code not in [401, 404] %}
+        <div class="nav-links">
+            <a href="/" class="btn btn-secondary">🏠 Home</a>
+            <a href="/dashboard" class="btn btn-secondary">📊 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+        </div>
+        {% endif %}
+    </nav>
+
+    <div class="container error-page-wrap">
+        <div class="error-atmosphere" aria-hidden="true">
+            <div class="error-orb error-orb-a"></div>
+            <div class="error-orb error-orb-b"></div>
+        </div>
+
+        <section class="error-layout" aria-labelledby="error-title">
+            <div class="error-hero-panel">
+                <div class="error-code-row">
+                    <span class="error-code-badge">Error {{ error_code }}</span>
+                    <span class="error-state-pill">Status</span>
+                </div>
+
+                <h1 id="error-title" class="error-page-title">{{ error_title }}</h1>
+                <p class="error-page-message">{{ error_message }}</p>
+
+                <div class="error-meta-grid">
+                    <article class="error-meta-card">
+                        <p class="error-meta-label">Route</p>
+                        <p class="error-meta-value">{{ request.path }}</p>
+                    </article>
+                    <article class="error-meta-card">
+                        <p class="error-meta-label">Code</p>
+                        <p class="error-meta-value">{{ error_code }}</p>
+                    </article>
+                    <article class="error-meta-card">
+                        <p class="error-meta-label">Time</p>
+                        <p class="error-meta-value">Now</p>
+                    </article>
+                </div>
+
+                {% if error_code not in [401, 404] %}
+                <div class="error-page-actions">
+                    <a href="/" class="btn btn-primary error-home-btn">Return to Home</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <aside class="error-side-panel">
+                <h2 class="error-side-title">What You Can Do</h2>
+                <ul class="error-help-list">
+                    <li>Refresh the page and retry the last action.</li>
+                    <li>Verify your credentials and submitted input.</li>
+                    <li>Wait a few seconds if the service is temporarily busy.</li>
+                </ul>
+
+                <div class="error-side-note">
+                    <p class="error-side-note-title">Need Support?</p>
+                    <p class="error-side-note-text">If this issue continues, contact the TravelGo support team and include this error code.</p>
+                </div>
+            </aside>
+        </section>
+    </div>
+
+    <div class="error-signal-bar" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

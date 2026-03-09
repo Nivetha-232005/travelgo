@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flights - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>✈️ Find Flights</h1>
+            <p>Search and book the best flight deals to your favorite destinations</p>
+        </div>
+
+        <div class="search-card">
+            <h2 class="flight-search-title">Flight Search</h2>
+            <form method="POST">
+                <div class="location-tools">
+                    <button type="button" class="btn btn-secondary location-track-btn" data-location-targets="flight_from" onclick="handleLocationTracking(this)">📍 Use Current Location</button>
+                    <span class="location-track-status" aria-live="polite"></span>
+                </div>
+                <input type="hidden" name="user_lat" value="">
+                <input type="hidden" name="user_lng" value="">
+
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="flight_from">From</label>
+                        <input type="text" id="flight_from" name="from_city" placeholder="Departure city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="flight_to">To</label>
+                        <input type="text" id="flight_to" name="to_city" placeholder="Destination city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="flight_departure">Departure Date</label>
+                        <input type="date" id="flight_departure" name="departure" title="Departure date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="flight_passengers">Passengers</label>
+                        <input type="number" id="flight_passengers" name="passengers" min="1" max="9" value="1" title="Passengers" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary flight-search-btn">Search Flights</button>
+            </form>
+        </div>
+
+        {% if flights %}
+        <div class="hero flight-available-hero">
+            <h2 class="flight-available-title">Available Flights</h2>
+            <p class="flight-available-subtitle">{{ flights|length }} flights found</p>
+        </div>
+
+        <div class="flight-list-wrap">
+            {% for flight in flights %}
+            <div class="product-card flight-card-grid">
+                <div>
+                    <div class="flight-airline">✈️ {{ flight.airline }}</div>
+                    <div class="flight-route">{{ flight.from }} → {{ flight.to }}</div>
+                    <div class="flight-stops">Stops: {{ flight.stops }}</div>
+                </div>
+                <div>
+                    <div class="flight-details-title">⏱️ Flight Details</div>
+                    <div class="flight-details-line">
+                        <strong>Departs:</strong> {{ flight.departure }}
+                    </div>
+                    <div class="flight-details-line">
+                        <strong>Arrives:</strong> {{ flight.arrival }}
+                    </div>
+                    <div class="flight-duration">Duration: {{ flight.duration }}</div>
+                </div>
+                <div class="flight-center-block">
+                    <div class="product-rating flight-rating">⭐ {{ flight.rating }}</div>
+                    <div class="product-price flight-price">{{ flight.price }}</div>
+                    <div class="flight-seats">{{ flight.seats }} seats available</div>
+                </div>
+                <div class="flight-actions">
+                    <form method="POST" action="/book-flight">
+                        <input type="hidden" name="airline" value="{{ flight.airline }}">
+                        <input type="hidden" name="from_city" value="{{ flight.from }}">
+                        <input type="hidden" name="to_city" value="{{ flight.to }}">
+                        <input type="hidden" name="departure" value="{{ flight.departure }}">
+                        <input type="hidden" name="arrival" value="{{ flight.arrival }}">
+                        <input type="hidden" name="duration" value="{{ flight.duration }}">
+                        <input type="hidden" name="price" value="{{ flight.price }}">
+                        <input type="hidden" name="passengers" value="{{ search_params.get('passengers', '1') }}">
+                        <button type="submit" class="btn btn-primary flight-pay-btn">Continue to Payment</button>
+                    </form>
+                    <button class="btn btn-secondary flight-wishlist-btn" onclick="addToWishlist('{{ flight.airline }}', '{{ flight.price }}')">❤️</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="flight-empty-wrap">
+            <p class="flight-empty-text">Use the search form above to find the best flight deals!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        function addToWishlist(name, price) {
+            fetch('/api/add-to-wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    item: name,
+                    price: price
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Added to wishlist!', 'success');
+                }
+            })
+            .catch(() => {
+                window.location.href = '/error/failed-fetch';
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideInNotification 0.3s ease-out;
+                ${type === 'success' ? 'background: rgba(76, 175, 80, 0.9); border: 1px solid #4caf50;' : 'background: rgba(244, 67, 54, 0.9); border: 1px solid #f44336;'}
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

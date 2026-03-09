@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotels - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>🏨 Find Your Perfect Hotel</h1>
+            <p>Discover amazing accommodations at the best prices</p>
+        </div>
+
+        <div class="search-card">
+            <h2 class="hotel-search-title">Search Hotels</h2>
+            <form method="POST">
+                <div class="location-tools">
+                    <button type="button" class="btn btn-secondary location-track-btn" data-location-targets="hotel_destination" onclick="handleLocationTracking(this)">📍 Use Current Location</button>
+                    <span class="location-track-status" aria-live="polite"></span>
+                </div>
+                <input type="hidden" name="user_lat" value="">
+                <input type="hidden" name="user_lng" value="">
+
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="hotel_destination">Destination</label>
+                        <input type="text" id="hotel_destination" name="destination" placeholder="Where do you want to go?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hotel_check_in">Check-in Date</label>
+                        <input type="date" id="hotel_check_in" name="check_in" title="Check-in date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hotel_check_out">Check-out Date</label>
+                        <input type="date" id="hotel_check_out" name="check_out" title="Check-out date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hotel_price_range">Price Range</label>
+                        <select id="hotel_price_range" name="price_range" title="Price range">
+                            <option value="budget">Budget (Under ₹8,500)</option>
+                            <option value="moderate" selected>Moderate (₹8,500-₹21,000)</option>
+                            <option value="luxury">Luxury (₹21,000+)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary hotel-search-btn">Search Hotels</button>
+            </form>
+        </div>
+
+        {% if hotels %}
+        <div class="hero hotel-available-hero">
+            <h2 class="hotel-available-title">Available Hotels</h2>
+            <p class="hotel-available-subtitle">{{ hotels|length }} hotels found</p>
+        </div>
+
+        <div class="product-grid">
+            {% for hotel in hotels %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if hotel.image_url %}
+                    <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}" loading="lazy">
+                    {% else %}
+                    <span>🏨</span>
+                    {% endif %}
+                </div>
+                <div class="product-content">
+                    <div class="product-title">{{ hotel.name }}</div>
+                    <div class="product-description">{{ hotel.destination }}</div>
+                    <div class="hotel-meta-line">
+                        👥 {{ hotel.beds }} | 🛏️ 1 Room
+                    </div>
+                    <div class="hotel-meta-line hotel-meta-line-spaced">
+                        ✨ {{ hotel.amenities }}
+                    </div>
+                    <div class="product-rating">⭐ {{ hotel.rating }}/5</div>
+                    <div class="product-price">{{ hotel.price }} per night</div>
+                    <div class="hotel-action-wrap">
+                        <form method="POST" action="/book-hotel" class="hotel-book-form">
+                            <input type="hidden" name="hotel_name" value="{{ hotel.name }}">
+                            <input type="hidden" name="check_in" value="{{ search_params.get('check_in', '') }}">
+                            <input type="hidden" name="check_out" value="{{ search_params.get('check_out', '') }}">
+                            <input type="hidden" name="price" value="{{ hotel.price }}">
+                            <input type="hidden" name="rooms" value="1">
+                            <button type="submit" class="btn btn-primary hotel-pay-btn">Continue to Payment</button>
+                        </form>
+                        <button class="btn btn-secondary hotel-wishlist-btn" onclick="addToWishlist('{{ hotel.name }}', '{{ hotel.price }}')">❤️</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="hotel-empty-wrap">
+            <p class="hotel-empty-text">Use the search form above to find amazing hotels!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        function addToWishlist(name, price) {
+            fetch('/api/add-to-wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    item: name,
+                    price: price
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Added to wishlist!', 'success');
+                }
+            })
+            .catch(() => {
+                window.location.href = '/error/failed-fetch';
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideInNotification 0.3s ease-out;
+                ${type === 'success' ? 'background: rgba(76, 175, 80, 0.9); border: 1px solid #4caf50;' : 'background: rgba(244, 67, 54, 0.9); border: 1px solid #f44336;'}
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

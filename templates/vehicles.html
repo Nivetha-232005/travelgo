@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Rentals - TravelGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+        }
+
+        .search-section h2 {
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #00d4ff;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-btn {
+            grid-column: 1 / -1;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Vehicles Grid */
+        .vehicles-section {
+            margin-bottom: 3rem;
+        }
+
+        .vehicles-section h2 {
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .vehicle-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 0;
+            transition: all 0.4s;
+            cursor: pointer;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vehicle-card::before {
+            content: none;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 210px;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+
+        .vehicle-card:hover .vehicle-image img {
+            transform: scale(1.08);
+        }
+
+        .vehicle-content {
+            padding: 1.3rem 1.4rem 1.4rem;
+        }
+
+        .vehicle-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            line-height: 1.25;
+        }
+
+        .vehicle-type {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff006e, #7b2ff7);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff, #ffbe0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            color: #a0a0a0;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .detail-item strong {
+            color: #ffffff;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.85rem;
+            line-height: 1;
+            background: transparent;
+            border: none;
+            flex-shrink: 0;
+            filter: brightness(1.25) saturate(1.2);
+        }
+
+        .vehicle-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .stars {
+            color: #ffbe0b;
+            margin-right: 0.5rem;
+        }
+
+        .vehicle-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.8rem;
+        }
+
+        .view-btn,
+        .seat-btn,
+        .book-btn {
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-btn {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            border: 2px solid #00d4ff;
+        }
+
+        .view-btn:hover {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .seat-btn {
+            background: rgba(255, 190, 11, 0.18);
+            color: #ffbe0b;
+            border: 2px solid rgba(255, 190, 11, 0.85);
+        }
+
+        .seat-btn:hover {
+            background: #ffbe0b;
+            color: #000;
+        }
+
+        .book-btn {
+            background: linear-gradient(135deg, #ff006e, #7b2ff7);
+            color: #fff;
+        }
+
+        .book-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 0, 110, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #a0a0a0;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(26, 26, 46, 0.95);
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+            padding: 2rem;
+            margin-top: 3rem;
+            border-radius: 10px;
+            text-align: center;
+            color: #a0a0a0;
+        }
+
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        footer a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #ff006e;
+        }
+
+        /* Booking Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: auto;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            width: 90%;
+            max-width: 500px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .close {
+            color: #00d4ff;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff006e;
+        }
+
+        .modal-content h2 {
+            color: #00d4ff;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-note {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-form input {
+            padding: 0.8rem;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .modal-form input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-btn {
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .vehicle-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-section">
+            <h2>🔍 Find Your Perfect Transport</h2>
+            <form method="POST" class="search-form">
+                <div class="location-tools vehicle-location-tools">
+                    <button type="button" class="btn btn-secondary location-track-btn" data-location-targets="location,destination" onclick="handleLocationTracking(this)">📍 Use Current Location</button>
+                    <span class="location-track-status" aria-live="polite"></span>
+                </div>
+                <input type="hidden" name="user_lat" value="">
+                <input type="hidden" name="user_lng" value="">
+
+                <div class="form-group">
+                    <label for="location">📍 Pickup Location</label>
+                    <input type="text" id="location" name="location" placeholder="City or Airport"
+                           value="{{ search_params.get('location', '') if search_params else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="destination">📌 Destination</label>
+                    <input type="text" id="destination" name="destination" placeholder="Drop location or destination"
+                           value="{{ search_params.get('destination', '') if search_params else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="pickup_date">📅 Pickup Date</label>
+                    <input type="date" id="pickup_date" name="pickup_date" 
+                           value="{{ search_params.get('pickup_date', '') if search_params else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="return_date">📅 Return Date</label>
+                    <input type="date" id="return_date" name="return_date" 
+                           value="{{ search_params.get('return_date', '') if search_params else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="vehicle_type">🧭 Transport Type</label>
+                    <select id="vehicle_type" name="vehicle_type">
+                        <option value="all" {% if not search_params or search_params.get('vehicle_type') == 'all' %}selected{% endif %}>All Transport Plans</option>
+                        <option value="economy" {% if search_params and search_params.get('vehicle_type') == 'economy' %}selected{% endif %}>Economy Cars</option>
+                        <option value="premium" {% if search_params and search_params.get('vehicle_type') == 'premium' %}selected{% endif %}>Premium Cars</option>
+                        <option value="suv" {% if search_params and search_params.get('vehicle_type') == 'suv' %}selected{% endif %}>SUV</option>
+                        <option value="luxury" {% if search_params and search_params.get('vehicle_type') == 'luxury' %}selected{% endif %}>Luxury Cars</option>
+                        <option value="bus" {% if search_params and search_params.get('vehicle_type') == 'bus' %}selected{% endif %}>Bus</option>
+                        <option value="train" {% if search_params and search_params.get('vehicle_type') == 'train' %}selected{% endif %}>Train</option>
+                    </select>
+                </div>
+                <button type="submit" class="search-btn">🔍 Search Transport Plans</button>
+            </form>
+        </div>
+
+        <!-- Vehicles Section -->
+        <div class="vehicles-section">
+            {% if vehicles %}
+            <h2>✨ Available Transport Plans ({{ vehicles|length }})</h2>
+            <div class="vehicles-grid">
+                {% for vehicle in vehicles %}
+                <div class="vehicle-card">
+                    <div class="vehicle-image">
+                        <img src="{{ vehicle.image_url }}" alt="{{ vehicle.name }}" loading="lazy">
+                    </div>
+                    <div class="vehicle-content">
+                        <div class="vehicle-name">{{ vehicle.name }}</div>
+                        <div class="vehicle-type">{{ vehicle.type }}</div>
+
+                        <div class="vehicle-price">{{ vehicle.price }}{{ vehicle.pricing_unit if vehicle.pricing_unit else '/day' }}</div>
+
+                        <div class="vehicle-details">
+                            <div class="detail-item">
+                                <strong>👥</strong> {{ vehicle.passengers }}
+                            </div>
+                            <div class="detail-item">
+                                <strong>⛽</strong> {{ vehicle.fuel }}
+                            </div>
+                            <div class="detail-item">
+                                <strong>🎯</strong> {{ vehicle.transmission }}
+                            </div>
+                            <div class="detail-item">
+                                <strong>🧳</strong> {{ vehicle.luggage }}
+                            </div>
+                        </div>
+
+                        <div class="vehicle-rating">
+                            <span class="stars">
+                                {% set full_stars = vehicle.rating|float|int %}
+                                {{ '★' * full_stars }}{{ '☆' * (5 - full_stars) }}
+                            </span>
+                            <span>{{ vehicle.rating }}</span>
+                        </div>
+
+                        <div class="vehicle-actions">
+                            <a href="{{ url_for('vehicle_details', vehicle_id=vehicle.id, location=(search_params.get('location', '') if search_params else ''), destination=(search_params.get('destination', '') if search_params else ''), pickup_date=(search_params.get('pickup_date', '') if search_params else ''), return_date=(search_params.get('return_date', '') if search_params else '')) }}" class="view-btn">View Details</a>
+                            <a href="{{ url_for('transport_seats', vehicle_id=vehicle.id, location=(search_params.get('location', '') if search_params else ''), destination=(search_params.get('destination', '') if search_params else ''), pickup_date=(search_params.get('pickup_date', '') if search_params else ''), return_date=(search_params.get('return_date', '') if search_params else '')) }}" class="seat-btn">Select Seats</a>
+                            <button class="book-btn" onclick="openBookingModal('{{ vehicle.name }}', '{{ vehicle.price }}')">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-results">
+                <p>🚗 No transport plans found. Try adjusting your search criteria!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>Complete Your Booking</h2>
+            <form class="modal-form" method="POST" action="/book-vehicle">
+                <input type="hidden" id="vehicle_name" name="vehicle_name" value="">
+                <input type="hidden" id="vehicle_price" name="price" value="">
+                <input type="hidden" id="modal_location" name="location" value="">
+                <input type="hidden" id="modal_destination" name="destination" value="">
+                <input type="hidden" id="modal_pickup" name="pickup_date" value="">
+                <input type="hidden" id="modal_return" name="return_date" value="">
+                <p class="modal-note">
+                    Pickup, destination, and dates will be taken from your search details.
+                </p>
+                <button type="submit" class="submit-btn">✅ Continue to Payment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="/dashboard">Home</a>
+            <a href="/offers">Offers</a>
+            <a href="/tips">Travel Tips</a>
+            <a href="/profile">Profile</a>
+        </div>
+        <p>&copy; 2024 TravelGo. All rights reserved. | Travel Smart, Travel Safe</p>
+    </footer>
+
+    <script>
+        function openBookingModal(vehicleName, price) {
+            const location = document.getElementById('location').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const pickupDate = document.getElementById('pickup_date').value;
+            const returnDate = document.getElementById('return_date').value;
+
+            if (!location || !destination || !pickupDate || !returnDate) {
+                alert('Please fill pickup location, destination, pickup date, and return date before booking.');
+                return;
+            }
+
+            document.getElementById('vehicle_name').value = vehicleName;
+            document.getElementById('vehicle_price').value = price;
+            document.getElementById('modal_location').value = location;
+            document.getElementById('modal_destination').value = destination;
+            document.getElementById('modal_pickup').value = pickupDate;
+            document.getElementById('modal_return').value = returnDate;
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('bookingModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Set today's date as minimum for date inputs
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('pickup_date').min = today;
+        document.getElementById('return_date').min = today;
+
+        // Keep return date after pickup date.
+        document.getElementById('pickup_date').addEventListener('change', function() {
+            document.getElementById('return_date').min = this.value;
+        });
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

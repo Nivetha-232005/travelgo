@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGo - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">✈️ TravelGo</div>
+        <div class="nav-links">
+            <a href="/search" class="btn btn-secondary">🔍 Search</a>
+            <a href="/hotels" class="btn btn-secondary">🏨 Hotels</a>
+            <a href="/flights" class="btn btn-secondary">✈️ Flights</a>
+            <a href="/vehicles" class="btn btn-secondary">🚗 Vehicles</a>
+            <a href="/bookings" class="btn btn-secondary">📋 Bookings</a>
+            <a href="/wishlist" class="btn btn-secondary">❤️ Wishlist</a>
+            <a href="/notifications" class="btn btn-secondary">🔔 Notifications</a>
+            <a href="/reviews" class="btn btn-secondary">⭐ Reviews</a>
+            <a href="/profile" class="btn btn-secondary">👤 Profile</a>
+            <div class="nav-links-sidebar-logout">
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-danger nav-logout">🚪 Logout</a>
+        <button class="nav-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+    <div class="nav-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome back, {{ session.user_name }}! 👋</h1>
+            <p>Your personal travel dashboard - plan, book, and manage your adventures</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Countries Visited</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">₹2,03,350</div>
+                <div class="stat-label">Total Spent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">⭐ 4.8</div>
+                <div class="stat-label">Traveler Rating</div>
+            </div>
+        </div>
+
+        <div style="margin: 3rem 0;">
+            <h2 style="margin-bottom: 2rem; color: #00d4ff; font-size: 1.8rem;">What would you like to do?</h2>
+            <div class="features">
+                <a href="/search" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Search Destinations</h3>
+                    <p>Find and book your next adventure to amazing places around the world</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">Explore Now →</div>
+                </a>
+                <a href="/bookings" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">📋</div>
+                    <h3>My Bookings</h3>
+                    <p>View and manage all your travel bookings and reservations</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">View Bookings →</div>
+                </a>
+                <a href="/hotels" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">🏨</div>
+                    <h3>Book Hotels</h3>
+                    <p>Find and reserve accommodations from budget to luxury options</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">Browse Hotels →</div>
+                </a>
+                <a href="/flights" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">✈️</div>
+                    <h3>Search Flights</h3>
+                    <p>Compare flight deals and book your tickets at the best prices</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">Find Flights →</div>
+                </a>
+                <a href="/vehicles" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">🚗</div>
+                    <h3>Rent Vehicles</h3>
+                    <p>Reserve cars, SUVs, and luxury vehicles at competitive rates</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">Browse Vehicles →</div>
+                </a>
+                <a href="/offers" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">🎁</div>
+                    <h3>Special Offers</h3>
+                    <p>Get exclusive deals and discounts on travel packages</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">View Offers →</div>
+                </a>
+                <a href="/tips" class="feature-card" style="text-decoration: none; cursor: pointer;">
+                    <div class="feature-icon">📱</div>
+                    <h3>Travel Tips</h3>
+                    <p>Get valuable advice from experienced travelers worldwide</p>
+                    <div style="margin-top: 1rem; color: #00d4ff; font-weight: 600;">Learn More →</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Access Cards -->
+        <div style="margin: 4rem 0; padding: 3rem; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 247, 0.1)); border-radius: 20px; border: 1px solid rgba(0, 212, 255, 0.2);">
+            <h2 style="margin-bottom: 2rem; color: #00d4ff;">Recent Activity</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>🎯 Destination</th>
+                            <th>📅 Date</th>
+                            <th>👥 Travelers</th>
+                            <th>📊 Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Paris, France</td>
+                            <td>March 15-20, 2026</td>
+                            <td>2 People</td>
+                            <td><span class="badge badge-success">Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tokyo, Japan</td>
+                            <td>April 10-25, 2026</td>
+                            <td>1 Person</td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>Barcelona, Spain</td>
+                            <td>May 5-12, 2026</td>
+                            <td>3 People</td>
+                            <td><span class="badge badge-success">Confirmed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div style="margin: 4rem 0;">
+            <h2 style="margin-bottom: 2rem; color: #00d4ff; text-align: center; font-size: 1.8rem;">Recommended for You</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-image plan-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1431274172761-fca41d930114?auto=format&fit=crop&w=1200&q=80" alt="Parisian Romance" class="plan-card-image">
+                    </div>
+                    <div class="product-content">
+                        <div class="product-title">Parisian Romance</div>
+                        <div class="product-description">Experience the charm of Paris</div>
+                        <div class="product-rating">⭐ 4.9/5 (2,345 reviews)</div>
+                        <div class="product-price">₹99,600</div>
+                        <a href="/search?destination=Paris" class="btn btn-primary" style="width: 100%; padding: 0.7rem; text-align: center;">Explore</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image plan-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80" alt="Tropical Paradise" class="plan-card-image">
+                    </div>
+                    <div class="product-content">
+                        <div class="product-title">Tropical Paradise</div>
+                        <div class="product-description">Relax on pristine beaches</div>
+                        <div class="product-rating">⭐ 4.8/5 (1,890 reviews)</div>
+                        <div class="product-price">₹78,850</div>
+                        <a href="/search?destination=Bali" class="btn btn-primary" style="width: 100%; padding: 0.7rem; text-align: center;">Explore</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image plan-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80" alt="Tokyo Adventure" class="plan-card-image">
+                    </div>
+                    <div class="product-content">
+                        <div class="product-title">Tokyo Adventure</div>
+                        <div class="product-description">Modern tech and tradition</div>
+                        <div class="product-rating">⭐ 4.7/5 (1,567 reviews)</div>
+                        <div class="product-price">₹1,24,500</div>
+                        <a href="/search?destination=Tokyo" class="btn btn-primary" style="width: 100%; padding: 0.7rem; text-align: center;">Explore</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image plan-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80" alt="Royal Rajasthan Road Trip" class="plan-card-image">
+                    </div>
+                    <div class="product-content">
+                        <div class="product-title">Royal Rajasthan Road Trip</div>
+                        <div class="product-description">Car-based desert and heritage circuit</div>
+                        <div class="product-rating">⭐ 4.7/5 (1,210 reviews)</div>
+                        <div class="product-price">₹42,000</div>
+                        <a href="/search?destination=Jaipur" class="btn btn-primary" style="width: 100%; padding: 0.7rem; text-align: center;">Explore</a>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image plan-card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1200&q=80" alt="India Rail Explorer" class="plan-card-image">
+                    </div>
+                    <div class="product-content">
+                        <div class="product-title">India Rail Explorer</div>
+                        <div class="product-description">Train journey across iconic Indian cities</div>
+                        <div class="product-rating">⭐ 4.6/5 (980 reviews)</div>
+                        <div class="product-price">₹36,000</div>
+                        <a href="/search?destination=Delhi" class="btn btn-primary" style="width: 100%; padding: 0.7rem; text-align: center;">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TravelGo</h3>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">FAQs</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 TravelGo. All rights reserved. | Your trusted travel companion</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
